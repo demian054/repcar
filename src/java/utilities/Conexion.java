@@ -13,8 +13,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -39,7 +37,7 @@ public class Conexion {
         url = "jdbc:postgresql://localhost:5432/repcar";
         driver = "org.postgresql.Driver";
         user = "postgres";
-        pass = "cocorote";
+        pass = "abc123";
         Class.forName(driver);
         con = DriverManager.getConnection(url, user, pass);
     }
@@ -93,6 +91,25 @@ public class Conexion {
         this.pass = pass;
     }
     
+    public boolean execute(String query){
+        try {
+            Statement stmt = con.createStatement();
+            System.out.println("Ejecutando query "+query);
+            stmt.execute(query);
+            System.out.println("query ejecutado "+true);
+            return true;
+            //System.out.println(rs);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        
+    }
+    
+    
+    
+    
     public List<LinkedHashMap<String, String>> select(String query) throws SQLException{
         List<LinkedHashMap<String, String>> resultado = new ArrayList<LinkedHashMap<String, String>>();
         Statement stmt = con.createStatement();
@@ -102,14 +119,17 @@ public class Conexion {
         ResultSetMetaData rmtd = rs.getMetaData();
         int columnCount = rmtd.getColumnCount();
         //System.out.println(rmtd);
+        boolean result = false;
         while ( rs.next()){
+            result = true;
             LinkedHashMap<String, String> row = new LinkedHashMap<String, String>();
             for (int i = 0; i < columnCount; i++) {
-                System.out.println("columna: "+rmtd.getColumnName(i+1)+" valor: "+rs.getString(i+1));
-                row.put(rmtd.getColumnName(i+1), rs.getString(i+1));
+                //System.out.println("columna: "+rmtd.getColumnName(i+1)+" valor: "+functions.isNullOrEmpty(rs.getString(i+1),""));
+                row.put(rmtd.getColumnName(i+1), (String) functions.isNullOrEmpty(rs.getString(i+1),""));
             }
             resultado.add(row);
         }
+        System.out.println("query ejecutado "+result);
         return resultado;
     }
     

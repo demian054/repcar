@@ -45,9 +45,8 @@
         countRow++;
     }
     String table = "<table border ='1' align='center'>"+table_head+table_rows+"</table>";
-    out.println(table);
+    
 %>
-                    <table border="1" align="center">
-
-                    </table>
+<a href="create.jsp">Crear Nuevo</a>
+<%out.println(table);%>
 <jsp:include page="../inicio/foot.jsp" />
