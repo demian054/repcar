@@ -17,21 +17,25 @@
     String default_table = "inventarios";
     String default_schema = "bussines";
     Conexion con = new Conexion();
+
+    String id = request.getParameter("id");
     String action = request.getParameter("action");
     //out.println(action);
     if (functions.isNullOrEmpty(action)){
-        if (action.equalsIgnoreCase("create")){
-             if (con.insert(default_table, default_schema, request)){
+        if (action.equalsIgnoreCase("update")){
+             if (con.update(default_table, default_schema, request)){
                  session.setAttribute("msg", "Registro Ingresado Correctamente");
                  response.sendRedirect("listAll.jsp?msg=true");
              }else{
                  session.setAttribute("msg_error", "Problemas al Crear Registro");
-                 response.sendRedirect("create.jsp?msg_error=true");
+                 response.sendRedirect("update.jsp?msg_error=true");
              };
         }
     }
-    views_generator vg = new views_generator(default_table);
-    out.println(vg.getFormCreate());
+    if (functions.isNullOrEmpty(id)){
+        views_generator vg = new views_generator(default_table,default_schema);
+        out.println(vg.getFormUpdate(id));
+    }
 %>
 
 <jsp:include page="../inicio/foot.jsp" />

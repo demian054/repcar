@@ -13,8 +13,11 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import org.postgresql.util.PSQLException;
 
 /**
  *
@@ -23,8 +26,7 @@ import java.util.List;
 
 
 public class Conexion {
-  
-    
+
     private Connection con;
     private String url;
     private String driver;
@@ -32,14 +34,15 @@ public class Conexion {
     private String pass;
     
     
-    public Conexion() throws SQLException, ClassNotFoundException {
+    public Conexion() throws PSQLException, SQLException, ClassNotFoundException {
        
         url = "jdbc:postgresql://localhost:5432/repcar";
         driver = "org.postgresql.Driver";
         user = "postgres";
-        pass = "abc123";
+        pass = "cocorote";
         Class.forName(driver);
         con = DriverManager.getConnection(url, user, pass);
+        
     }
     
 
@@ -106,10 +109,7 @@ public class Conexion {
         }
         
     }
-    
-    
-    
-    
+
     public List<LinkedHashMap<String, String>> select(String query) throws SQLException{
         List<LinkedHashMap<String, String>> resultado = new ArrayList<LinkedHashMap<String, String>>();
         Statement stmt = con.createStatement();
@@ -131,6 +131,55 @@ public class Conexion {
         }
         System.out.println("query ejecutado "+result);
         return resultado;
+    }
+    
+    public List<LinkedHashMap<String,String>> getInformationTable(String table_name) throws SQLException{
+        String sql=
+            "select "
+         + "column_name, "
+         + "is_nullable, "
+         + "data_type, "
+         + "character_maximum_length "
+         + "from INFORMATION_SCHEMA.COLUMNS where table_name = '"+table_name+"'"
+         + "order by ordinal_position ";
+        return this.select(sql);    
+    }
+    
+    public boolean insert(String table_name, String schema_name, HttpServletRequest request) throws SQLException{
+        String insert_head = "";
+        String insert_row = "";
+        List<LinkedHashMap<String,String>> informationTable = this.getInformationTable(table_name);
+        for(HashMap<String,String> insert_heads: informationTable){
+           String column_name = insert_heads.get("column_name");
+           String column_value = request.getParameter(column_name);
+           if (functions.isNullOrEmpty(column_value)){
+               //TODO: validaciones de los datos
+               insert_head = functions.addWhithComma(insert_head, column_name);
+               insert_row = functions.addWhithComma(insert_row, "'"+column_value+"'");
+           }                 
+        }
+        String insert_sql = "INSERT INTO "+schema_name+"."+table_name+" ("+insert_head+") VALUES ("+insert_row+")";
+        return this.execute(insert_sql);
+    }
+    
+     public boolean update(String table_name, String schema_name, HttpServletRequest request) throws SQLException{
+        List<LinkedHashMap<String,String>> informationTable = this.getInformationTable(table_name);
+       String upate_row = "";
+        String where_sql = "";
+        for(HashMap<String,String> insert_heads: informationTable){
+           String column_name = insert_heads.get("column_name");
+           String column_value = request.getParameter(column_name);
+           if (functions.isNullOrEmpty(column_value)){
+               //TODO: validaciones de los datos
+               if (column_name.equalsIgnoreCase("id")){
+                    where_sql += " WHERE id = '"+column_value+"' ";
+               }else{
+                   upate_row = functions.addWhithComma(upate_row, column_name+" = '"+column_value+"' ");
+               }
+           }                 
+        }
+        String upate_sql = "UPDATE "+schema_name+"."+table_name+" SET "+upate_row+where_sql;
+        return this.execute(upate_sql);
     }
     
     

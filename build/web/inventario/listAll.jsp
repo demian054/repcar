@@ -4,6 +4,7 @@
     Author     : demian
 --%>
 
+<%@page import="utilities.views_generator"%>
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.Map.Entry"%>
 <%@page import="java.util.Iterator"%>
@@ -13,8 +14,13 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:include page="../inicio/head.jsp" />
 <%
+    
+    String default_table = "inventarios";
+    String default_schema = "bussines";
+    views_generator vg = new views_generator(default_table,default_schema);
+    out.println(vg.getListAll());
 
- String sql=
+ /*String sql=
             "select * from bussines.inventarios "
             + "where"
             + " deleted = '0'";
@@ -36,7 +42,14 @@
             if (countRow==0){
                 table_head+="<th>"+cell.getKey()+"</th>";
             }
-            table_rows+="<td>"+cell.getValue()+"</td>";
+            if (cell.getKey().toString().equalsIgnoreCase("id")){
+                table_rows+="<td><a href='detail.jsp?id="+cell.getValue()+"'>Detalle</a>-"
+                        + "<a href='update.jsp?id="+cell.getValue()+"'>Editar</a>-"
+                        + "<a href='delete.jsp?id="+cell.getValue()+"'>Eliminar</a></td>";
+            }else{
+                table_rows+="<td>"+cell.getValue()+"</td>";
+            }
+            
         }
         if (countRow==0){
             table_head+="</tr>";
@@ -44,9 +57,9 @@
         table_rows+="</tr>";
         countRow++;
     }
-    String table = "<table border ='1' align='center'>"+table_head+table_rows+"</table>";
+    String table = "<table border ='1' align='center'>"+table_head+table_rows+"</table>";*/
+    
+    
     
 %>
-<a href="create.jsp">Crear Nuevo</a>
-<%out.println(table);%>
 <jsp:include page="../inicio/foot.jsp" />
