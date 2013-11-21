@@ -14,30 +14,34 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:include page="../inicio/head.jsp" />
 <%
+    
+    
+    
+    Conexion con = new Conexion();
     String default_table = "inventarios";
     String default_schema = "bussines";
-    Conexion con = new Conexion();
-
     String id = request.getParameter("id");
+    
     String action = request.getParameter("action");
     //out.println(action);
-    if (functions.isNullOrEmpty(action)){
-        if (action.equalsIgnoreCase("update")){
-             if (con.update(default_table, default_schema, request)){
-                 session.setAttribute("msg", "Registro Ingresado Correctamente");
-                 response.sendRedirect("listAll.jsp?msg=true");
-             }else{
-                 session.setAttribute("msg_error", "Problemas al Crear Registro");
-                 response.sendRedirect("update.jsp?msg_error=true");
-             };
-        }
-    }
     if (functions.isNullOrEmpty(id)){
+        if (functions.isNullOrEmpty(action)){
+            if (action.equalsIgnoreCase("delete")){
+                 if (con.delete(default_table, default_schema, id)){
+                     session.setAttribute("msg", "Registro Eliminado Correctamente");
+                     response.sendRedirect("listAll.jsp?msg=true");
+                 }else{
+                     session.setAttribute("msg_error", "Problemas al Eliminar Registro");
+                     response.sendRedirect("delete.jsp?id="+id+"&msg_error=true");
+                 };
+            }
+        }
+    //out.println(action);
+    
         views_generator vg = new views_generator(default_table,default_schema);
-        out.println(vg.getFormUpdate(id));
+        out.println(vg.getFormDelete(id));
     }
 %>
-
 <jsp:include page="../inicio/foot.jsp" />
 
 

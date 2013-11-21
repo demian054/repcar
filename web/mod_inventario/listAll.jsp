@@ -58,8 +58,5 @@
         countRow++;
     }
     String table = "<table border ='1' align='center'>"+table_head+table_rows+"</table>";*/
-    
-    
-    
 %>
 <jsp:include page="../inicio/foot.jsp" />

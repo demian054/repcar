@@ -6,6 +6,7 @@
 
 package utilities;
 
+import entity.system.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.postgresql.util.PSQLException;
 
 /**
@@ -39,7 +41,7 @@ public class Conexion {
         url = "jdbc:postgresql://localhost:5432/repcar";
         driver = "org.postgresql.Driver";
         user = "postgres";
-        pass = "cocorote";
+        pass = "abc123";
         Class.forName(driver);
         con = DriverManager.getConnection(url, user, pass);
         
@@ -145,7 +147,7 @@ public class Conexion {
         return this.select(sql);    
     }
     
-    public boolean insert(String table_name, String schema_name, HttpServletRequest request) throws SQLException{
+    public boolean insert(String table_name, String schema_name, HttpServletRequest request, HttpSession session) throws SQLException{
         String insert_head = "";
         String insert_row = "";
         List<LinkedHashMap<String,String>> informationTable = this.getInformationTable(table_name);
@@ -158,6 +160,11 @@ public class Conexion {
                insert_row = functions.addWhithComma(insert_row, "'"+column_value+"'");
            }                 
         }
+        
+        User current_user = (User) functions.isNullOrEmpty(session.getAttribute("current_user"), new User());
+        insert_head+=", created_by, created_at";
+        insert_row+= ", '"+current_user.getId()+"', now()";
+
         String insert_sql = "INSERT INTO "+schema_name+"."+table_name+" ("+insert_head+") VALUES ("+insert_row+")";
         return this.execute(insert_sql);
     }
@@ -181,6 +188,13 @@ public class Conexion {
         String upate_sql = "UPDATE "+schema_name+"."+table_name+" SET "+upate_row+where_sql;
         return this.execute(upate_sql);
     }
+     
+    public boolean delete(String table_name, String schema_name, String id) throws SQLException{
+        String upate_sql = "UPDATE "+schema_name+"."+table_name+" SET deleted = '1' "
+                + "where id = '"+id+"'";
+        return this.execute(upate_sql);
+    } 
+     
     
     
     

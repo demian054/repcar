@@ -34,9 +34,11 @@
     }else{
         LinkedHashMap<String,String> row = result.get(0);
         User user = new User();
+        
         user.setId(Integer.parseInt(row.get("id")));
         user.setName(row.get("_name"));
         user.setLast_name(row.get("last_name"));
+        
         session.setAttribute("current_user", user);
         response.sendRedirect("menu.jsp");
     }
