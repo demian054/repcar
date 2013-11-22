@@ -6,13 +6,13 @@
 
 
 <%@page import="entity.system.User"%>
-<%@page  pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     User session_current_user = (User) session.getAttribute("current_user");
     User current_user = new User();
     if (session_current_user==null){
         session.setAttribute("msg_error", "La session ha expirado, por favor inicie de nuevo");
-        response.sendRedirect("login.jsp?msg_error=true");
+        response.sendRedirect("/rep-car3/inicio/login.jsp?msg_error=true");
     }else{
         current_user = session_current_user;  
     }
@@ -30,6 +30,7 @@
 	<script src="/rep-car3/assets/js/jquery-1.9.1.js"></script>
         <script src="/rep-car3/assets/js/jquery.dataTables.js"></script>
         <script src="/rep-car3/assets/js/jquery-ui-1.10.3.custom.js"></script>
+        <script src="/rep-car3/assets/js/form-validator/jquery.form-validator.js"></script>
 	
         
         <title>Login</title>
@@ -65,8 +66,8 @@
 				primary: "ui-icon-pencil"
 			}
 		});
-                $( ".update_record_" ).button({
-                        text: false,
+                $( ".update_record_name" ).button({
+                        text: true,
 			icons: {
 				primary: "ui-icon-pencil"
 			}
@@ -80,12 +81,14 @@
 				primary: "ui-icon-trash"
 			}
 		});
-                $( ".delete_record_msg" ).button({
+                $( ".delete_record_name" ).button({
                         text: true,
 			icons: {
 				primary: "ui-icon-trash"
 			}
 		});
+                
+                
                 
                 //botones de Crear
                 $( ".create_record" ).button({
@@ -94,13 +97,60 @@
 				primary: "ui-icon-plusthick"
 			}
 		});
+                
+                
+                 $( ".back" ).button({
+                        text: true,
+			icons: {
+				primary: "ui-icon ui-icon-arrowreturnthick-1-w"
+			}
+		});
+                
                 $('.data_table').dataTable({
                     bJQueryUI: true
                 });
                 
-                $( ".tabs_principal" ).tabs();
+                $(".tabs_principal" ).tabs();
+                $(".menu" ).menu();
+                //$(".form").validate();
                 
-                $( ".menu" ).menu();
+                $(".date").datepicker({dateFormat: 'dd/mm/yy'});
+                
+                var myLanguage = {
+                    errorTitle : 'Error de Validación en el Formulario !',
+                    requiredFields : 'Los campos son Obligatorios',
+                    badTime : 'El campo debe contener una Fecha valida',
+                    badEmail : 'You have not given a correct e-mail address',
+                    badTelephone : 'You have not given a correct phone number',
+                    badSecurityAnswer : 'You have not given a correct answer to the security question',
+                    badDate : 'You have not given a correct date',
+                    tooLongStart : 'You have given an answer longer than ',
+                    tooLongEnd : ' characters',
+                    tooShortStart : 'You have given an answer shorter than ',
+                    tooShortEnd : ' characters',
+                    badLength : 'You have to give an answer between ',
+                    notConfirmed : 'Values could not be confirmed',
+                    badDomain : 'Incorrect domain value',
+                    badUrl : 'The answer you gave was not a correct URL',
+                    badCustomVal : 'You gave an incorrect answer',
+                    badInt : 'El campo solo debe contener Números',
+                    badSecurityNumber : 'Your social security number was incorrect',
+                    badUKVatAnswer : 'Incorrect UK VAT Number',
+                    badStrength : 'The password isn\'t strong enough',
+                    badNumberOfSelectedOptionsStart : 'You have to choose at least ',
+                    badNumberOfSelectedOptionsEnd : ' answers',
+                    badAlphaNumeric : 'The answer you gave must contain only alphanumeric characters ',
+                    badAlphaNumericExtra: ' and ',
+                    wrongFileSize : 'The file you are trying to upload is too large',
+                    wrongFileType : 'The file you are trying to upload is of wrong type'
+                };
+
+                $.validate({
+                    //validateOnBlur : false, // disable validation when input looses focus
+                    errorMessagePosition : 'top',
+                    language : myLanguage,
+                    decimalSeparator : ','
+                });
                 
                 
 	});

@@ -41,7 +41,7 @@ public class Conexion {
         url = "jdbc:postgresql://localhost:5432/repcar";
         driver = "org.postgresql.Driver";
         user = "postgres";
-        pass = "abc123";
+        pass = "cocorote";
         Class.forName(driver);
         con = DriverManager.getConnection(url, user, pass);
         
