@@ -137,13 +137,16 @@ public class Conexion {
     
     public List<LinkedHashMap<String,String>> getInformationTable(String table_name) throws SQLException{
         String sql=
-            "select "
-         + "column_name, "
-         + "is_nullable, "
-         + "data_type, "
-         + "character_maximum_length "
-         + "from INFORMATION_SCHEMA.COLUMNS where table_name = '"+table_name+"'"
-         + "order by ordinal_position ";
+              "select "
+            + "column_name, "
+            + "is_nullable, "
+            + "data_type, "
+            + "character_maximum_length, "
+            + "numeric_precision, "
+            + "numeric_scale, "
+            + "datetime_precision "
+            + "from INFORMATION_SCHEMA.COLUMNS where table_name = '"+table_name+"'"
+            + "order by ordinal_position ";
         return this.select(sql);    
     }
     
@@ -156,8 +159,8 @@ public class Conexion {
            String column_value = request.getParameter(column_name);
            if (functions.isNullOrEmpty(column_value)){
                //TODO: validaciones de los datos
-               insert_head = functions.addWhithComma(insert_head, column_name);
-               insert_row = functions.addWhithComma(insert_row, "'"+column_value+"'");
+               insert_head = functions.addWithComma(insert_head, column_name);
+               insert_row = functions.addWithComma(insert_row, "'"+column_value+"'");
            }                 
         }
         
@@ -181,7 +184,7 @@ public class Conexion {
                if (column_name.equalsIgnoreCase("id")){
                     where_sql += " WHERE id = '"+column_value+"' ";
                }else{
-                   upate_row = functions.addWhithComma(upate_row, column_name+" = '"+column_value+"' ");
+                   upate_row = functions.addWithComma(upate_row, column_name+" = '"+column_value+"' ");
                }
            }                 
         }

@@ -20,7 +20,7 @@ import java.util.Iterator;
 public abstract class functions {
     
     public static Object isNullOrEmpty(Object object, Object defaultValue) {
-            if (object != null) {
+            if (object != null && !object.toString().equalsIgnoreCase("0")) {
                     return object;
             }
             return defaultValue;	
@@ -32,7 +32,7 @@ public abstract class functions {
     }
     
     
-    public static String addWhithComma(String total, String toAdd){
+    public static String addWithComma(String total, String toAdd){
             if (total.equalsIgnoreCase("")){
                 return toAdd;
             }else{

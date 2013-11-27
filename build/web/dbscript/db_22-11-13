@@ -1,0 +1,1250 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.1.9
+-- Dumped by pg_dump version 9.1.9
+-- Started on 2013-11-22 00:47:36 VET
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 8 (class 2615 OID 16439)
+-- Name: bussines; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA bussines;
+
+
+ALTER SCHEMA bussines OWNER TO postgres;
+
+--
+-- TOC entry 7 (class 2615 OID 16385)
+-- Name: system; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA system;
+
+
+ALTER SCHEMA system OWNER TO postgres;
+
+--
+-- TOC entry 195 (class 3079 OID 11644)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2038 (class 0 OID 0)
+-- Dependencies: 195
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = bussines, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 180 (class 1259 OID 16676)
+-- Dependencies: 1968 8
+-- Name: articulos; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE articulos (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    categorias_id_tipo_articulos integer
+);
+
+
+ALTER TABLE bussines.articulos OWNER TO postgres;
+
+--
+-- TOC entry 179 (class 1259 OID 16674)
+-- Dependencies: 8 180
+-- Name: articulos_id_seq; Type: SEQUENCE; Schema: bussines; Owner: postgres
+--
+
+CREATE SEQUENCE articulos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE bussines.articulos_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2039 (class 0 OID 0)
+-- Dependencies: 179
+-- Name: articulos_id_seq; Type: SEQUENCE OWNED BY; Schema: bussines; Owner: postgres
+--
+
+ALTER SEQUENCE articulos_id_seq OWNED BY articulos.id;
+
+
+--
+-- TOC entry 192 (class 1259 OID 16734)
+-- Dependencies: 1980 8
+-- Name: articulos_servicios; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE articulos_servicios (
+    articulos_id integer NOT NULL,
+    servicios_id integer NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL
+);
+
+
+ALTER TABLE bussines.articulos_servicios OWNER TO postgres;
+
+--
+-- TOC entry 182 (class 1259 OID 16685)
+-- Dependencies: 1970 8
+-- Name: categorias; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE categorias (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    _table character varying(63) NOT NULL
+);
+
+
+ALTER TABLE bussines.categorias OWNER TO postgres;
+
+--
+-- TOC entry 181 (class 1259 OID 16683)
+-- Dependencies: 8 182
+-- Name: categorias_id_seq; Type: SEQUENCE; Schema: bussines; Owner: postgres
+--
+
+CREATE SEQUENCE categorias_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE bussines.categorias_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2040 (class 0 OID 0)
+-- Dependencies: 181
+-- Name: categorias_id_seq; Type: SEQUENCE OWNED BY; Schema: bussines; Owner: postgres
+--
+
+ALTER SEQUENCE categorias_id_seq OWNED BY categorias.id;
+
+
+--
+-- TOC entry 190 (class 1259 OID 16721)
+-- Dependencies: 1978 8
+-- Name: citas; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE citas (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    fecha_cita timestamp without time zone NOT NULL,
+    cagoria_id_estado_citas integer NOT NULL,
+    vehiculos_id integer NOT NULL,
+    servicios_id integer NOT NULL
+);
+
+
+ALTER TABLE bussines.citas OWNER TO postgres;
+
+--
+-- TOC entry 189 (class 1259 OID 16719)
+-- Dependencies: 8 190
+-- Name: citas_id_seq; Type: SEQUENCE; Schema: bussines; Owner: postgres
+--
+
+CREATE SEQUENCE citas_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE bussines.citas_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2041 (class 0 OID 0)
+-- Dependencies: 189
+-- Name: citas_id_seq; Type: SEQUENCE OWNED BY; Schema: bussines; Owner: postgres
+--
+
+ALTER SEQUENCE citas_id_seq OWNED BY citas.id;
+
+
+--
+-- TOC entry 191 (class 1259 OID 16728)
+-- Dependencies: 1979 8
+-- Name: citas_servicios; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE citas_servicios (
+    citas_id integer NOT NULL,
+    servicios_id integer NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL
+);
+
+
+ALTER TABLE bussines.citas_servicios OWNER TO postgres;
+
+--
+-- TOC entry 176 (class 1259 OID 16655)
+-- Dependencies: 1964 8
+-- Name: clientes; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE clientes (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    last_name character varying(63) NOT NULL,
+    address character varying(255),
+    telef_1 character varying(63),
+    telef_2 character varying(63)
+);
+
+
+ALTER TABLE bussines.clientes OWNER TO postgres;
+
+--
+-- TOC entry 175 (class 1259 OID 16653)
+-- Dependencies: 176 8
+-- Name: clientes_id_seq; Type: SEQUENCE; Schema: bussines; Owner: postgres
+--
+
+CREATE SEQUENCE clientes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE bussines.clientes_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2042 (class 0 OID 0)
+-- Dependencies: 175
+-- Name: clientes_id_seq; Type: SEQUENCE OWNED BY; Schema: bussines; Owner: postgres
+--
+
+ALTER SEQUENCE clientes_id_seq OWNED BY clientes.id;
+
+
+--
+-- TOC entry 186 (class 1259 OID 16703)
+-- Dependencies: 1974 8
+-- Name: facturas; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE facturas (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    clientes_id integer NOT NULL
+);
+
+
+ALTER TABLE bussines.facturas OWNER TO postgres;
+
+--
+-- TOC entry 185 (class 1259 OID 16701)
+-- Dependencies: 8 186
+-- Name: facturas_id_seq; Type: SEQUENCE; Schema: bussines; Owner: postgres
+--
+
+CREATE SEQUENCE facturas_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE bussines.facturas_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2043 (class 0 OID 0)
+-- Dependencies: 185
+-- Name: facturas_id_seq; Type: SEQUENCE OWNED BY; Schema: bussines; Owner: postgres
+--
+
+ALTER SEQUENCE facturas_id_seq OWNED BY facturas.id;
+
+
+--
+-- TOC entry 174 (class 1259 OID 16645)
+-- Dependencies: 1961 1962 8
+-- Name: inventarios; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE inventarios (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    cantidad integer DEFAULT 1 NOT NULL,
+    articulos_id integer NOT NULL,
+    facturas_id integer,
+    citas_id integer
+);
+
+
+ALTER TABLE bussines.inventarios OWNER TO postgres;
+
+--
+-- TOC entry 173 (class 1259 OID 16643)
+-- Dependencies: 174 8
+-- Name: inventarios_id_seq; Type: SEQUENCE; Schema: bussines; Owner: postgres
+--
+
+CREATE SEQUENCE inventarios_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE bussines.inventarios_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2044 (class 0 OID 0)
+-- Dependencies: 173
+-- Name: inventarios_id_seq; Type: SEQUENCE OWNED BY; Schema: bussines; Owner: postgres
+--
+
+ALTER SEQUENCE inventarios_id_seq OWNED BY inventarios.id;
+
+
+--
+-- TOC entry 188 (class 1259 OID 16712)
+-- Dependencies: 1976 8
+-- Name: servicios; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE servicios (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    categorias_id_tipo_servicios integer NOT NULL
+);
+
+
+ALTER TABLE bussines.servicios OWNER TO postgres;
+
+--
+-- TOC entry 187 (class 1259 OID 16710)
+-- Dependencies: 188 8
+-- Name: servicios_id_seq; Type: SEQUENCE; Schema: bussines; Owner: postgres
+--
+
+CREATE SEQUENCE servicios_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE bussines.servicios_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2045 (class 0 OID 0)
+-- Dependencies: 187
+-- Name: servicios_id_seq; Type: SEQUENCE OWNED BY; Schema: bussines; Owner: postgres
+--
+
+ALTER SEQUENCE servicios_id_seq OWNED BY servicios.id;
+
+
+--
+-- TOC entry 194 (class 1259 OID 16803)
+-- Dependencies: 1982 8
+-- Name: user; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "user" (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    last_name character varying(63) NOT NULL,
+    address character varying(255),
+    telef_1 character varying(63),
+    telef_2 character varying(63)
+);
+
+
+ALTER TABLE bussines."user" OWNER TO postgres;
+
+--
+-- TOC entry 193 (class 1259 OID 16801)
+-- Dependencies: 194 8
+-- Name: user_id_seq; Type: SEQUENCE; Schema: bussines; Owner: postgres
+--
+
+CREATE SEQUENCE user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE bussines.user_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2046 (class 0 OID 0)
+-- Dependencies: 193
+-- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: bussines; Owner: postgres
+--
+
+ALTER SEQUENCE user_id_seq OWNED BY "user".id;
+
+
+--
+-- TOC entry 178 (class 1259 OID 16667)
+-- Dependencies: 1966 8
+-- Name: vehiculos; Type: TABLE; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE vehiculos (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    clientes_id integer NOT NULL
+);
+
+
+ALTER TABLE bussines.vehiculos OWNER TO postgres;
+
+--
+-- TOC entry 177 (class 1259 OID 16665)
+-- Dependencies: 8 178
+-- Name: vehiculos_id_seq; Type: SEQUENCE; Schema: bussines; Owner: postgres
+--
+
+CREATE SEQUENCE vehiculos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE bussines.vehiculos_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2047 (class 0 OID 0)
+-- Dependencies: 177
+-- Name: vehiculos_id_seq; Type: SEQUENCE OWNED BY; Schema: bussines; Owner: postgres
+--
+
+ALTER SEQUENCE vehiculos_id_seq OWNED BY vehiculos.id;
+
+
+SET search_path = system, pg_catalog;
+
+--
+-- TOC entry 184 (class 1259 OID 16694)
+-- Dependencies: 1972 7
+-- Name: category; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE category (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL
+);
+
+
+ALTER TABLE system.category OWNER TO postgres;
+
+--
+-- TOC entry 183 (class 1259 OID 16692)
+-- Dependencies: 184 7
+-- Name: category_id_seq; Type: SEQUENCE; Schema: system; Owner: postgres
+--
+
+CREATE SEQUENCE category_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE system.category_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2048 (class 0 OID 0)
+-- Dependencies: 183
+-- Name: category_id_seq; Type: SEQUENCE OWNED BY; Schema: system; Owner: postgres
+--
+
+ALTER SEQUENCE category_id_seq OWNED BY category.id;
+
+
+--
+-- TOC entry 166 (class 1259 OID 16606)
+-- Dependencies: 1953 7
+-- Name: profile; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE profile (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL
+);
+
+
+ALTER TABLE system.profile OWNER TO postgres;
+
+--
+-- TOC entry 165 (class 1259 OID 16604)
+-- Dependencies: 166 7
+-- Name: profile_id_seq; Type: SEQUENCE; Schema: system; Owner: postgres
+--
+
+CREATE SEQUENCE profile_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE system.profile_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2049 (class 0 OID 0)
+-- Dependencies: 165
+-- Name: profile_id_seq; Type: SEQUENCE OWNED BY; Schema: system; Owner: postgres
+--
+
+ALTER SEQUENCE profile_id_seq OWNED BY profile.id;
+
+
+--
+-- TOC entry 172 (class 1259 OID 16637)
+-- Dependencies: 1959 7
+-- Name: profile_user; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE profile_user (
+    user_id integer NOT NULL,
+    profile_id integer NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL
+);
+
+
+ALTER TABLE system.profile_user OWNER TO postgres;
+
+--
+-- TOC entry 164 (class 1259 OID 16592)
+-- Dependencies: 1951 7
+-- Name: task; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE task (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    url character varying(255) NOT NULL
+);
+
+
+ALTER TABLE system.task OWNER TO postgres;
+
+--
+-- TOC entry 163 (class 1259 OID 16590)
+-- Dependencies: 164 7
+-- Name: task_id_seq; Type: SEQUENCE; Schema: system; Owner: postgres
+--
+
+CREATE SEQUENCE task_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE system.task_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2050 (class 0 OID 0)
+-- Dependencies: 163
+-- Name: task_id_seq; Type: SEQUENCE OWNED BY; Schema: system; Owner: postgres
+--
+
+ALTER SEQUENCE task_id_seq OWNED BY task.id;
+
+
+--
+-- TOC entry 171 (class 1259 OID 16629)
+-- Dependencies: 1958 7
+-- Name: task_profile; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE task_profile (
+    task_id bigint NOT NULL,
+    profile_id bigint NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL
+);
+
+
+ALTER TABLE system.task_profile OWNER TO postgres;
+
+--
+-- TOC entry 170 (class 1259 OID 16627)
+-- Dependencies: 171 7
+-- Name: task_profile_profile_id_seq; Type: SEQUENCE; Schema: system; Owner: postgres
+--
+
+CREATE SEQUENCE task_profile_profile_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE system.task_profile_profile_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2051 (class 0 OID 0)
+-- Dependencies: 170
+-- Name: task_profile_profile_id_seq; Type: SEQUENCE OWNED BY; Schema: system; Owner: postgres
+--
+
+ALTER SEQUENCE task_profile_profile_id_seq OWNED BY task_profile.profile_id;
+
+
+--
+-- TOC entry 169 (class 1259 OID 16625)
+-- Dependencies: 7 171
+-- Name: task_profile_task_id_seq; Type: SEQUENCE; Schema: system; Owner: postgres
+--
+
+CREATE SEQUENCE task_profile_task_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE system.task_profile_task_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2052 (class 0 OID 0)
+-- Dependencies: 169
+-- Name: task_profile_task_id_seq; Type: SEQUENCE OWNED BY; Schema: system; Owner: postgres
+--
+
+ALTER SEQUENCE task_profile_task_id_seq OWNED BY task_profile.task_id;
+
+
+--
+-- TOC entry 168 (class 1259 OID 16615)
+-- Dependencies: 1955 7
+-- Name: user; Type: TABLE; Schema: system; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE "user" (
+    id bigint NOT NULL,
+    _name character varying(255) NOT NULL,
+    created_by integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_by integer,
+    updated_at timestamp without time zone,
+    deleted bit(1) DEFAULT B'0'::"bit" NOT NULL,
+    last_name character varying(63) NOT NULL,
+    address character varying(255),
+    telef_1 character varying(63),
+    telef_2 character varying(63),
+    pass character varying(63) NOT NULL,
+    user_name character varying(63) NOT NULL
+);
+
+
+ALTER TABLE system."user" OWNER TO postgres;
+
+--
+-- TOC entry 167 (class 1259 OID 16613)
+-- Dependencies: 168 7
+-- Name: user_id_seq; Type: SEQUENCE; Schema: system; Owner: postgres
+--
+
+CREATE SEQUENCE user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE system.user_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2053 (class 0 OID 0)
+-- Dependencies: 167
+-- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: system; Owner: postgres
+--
+
+ALTER SEQUENCE user_id_seq OWNED BY "user".id;
+
+
+SET search_path = bussines, pg_catalog;
+
+--
+-- TOC entry 1967 (class 2604 OID 16679)
+-- Dependencies: 179 180 180
+-- Name: id; Type: DEFAULT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY articulos ALTER COLUMN id SET DEFAULT nextval('articulos_id_seq'::regclass);
+
+
+--
+-- TOC entry 1969 (class 2604 OID 16688)
+-- Dependencies: 181 182 182
+-- Name: id; Type: DEFAULT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY categorias ALTER COLUMN id SET DEFAULT nextval('categorias_id_seq'::regclass);
+
+
+--
+-- TOC entry 1977 (class 2604 OID 16724)
+-- Dependencies: 190 189 190
+-- Name: id; Type: DEFAULT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY citas ALTER COLUMN id SET DEFAULT nextval('citas_id_seq'::regclass);
+
+
+--
+-- TOC entry 1963 (class 2604 OID 16658)
+-- Dependencies: 175 176 176
+-- Name: id; Type: DEFAULT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY clientes ALTER COLUMN id SET DEFAULT nextval('clientes_id_seq'::regclass);
+
+
+--
+-- TOC entry 1973 (class 2604 OID 16706)
+-- Dependencies: 185 186 186
+-- Name: id; Type: DEFAULT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY facturas ALTER COLUMN id SET DEFAULT nextval('facturas_id_seq'::regclass);
+
+
+--
+-- TOC entry 1960 (class 2604 OID 16648)
+-- Dependencies: 174 173 174
+-- Name: id; Type: DEFAULT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY inventarios ALTER COLUMN id SET DEFAULT nextval('inventarios_id_seq'::regclass);
+
+
+--
+-- TOC entry 1975 (class 2604 OID 16715)
+-- Dependencies: 187 188 188
+-- Name: id; Type: DEFAULT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY servicios ALTER COLUMN id SET DEFAULT nextval('servicios_id_seq'::regclass);
+
+
+--
+-- TOC entry 1981 (class 2604 OID 16806)
+-- Dependencies: 193 194 194
+-- Name: id; Type: DEFAULT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY "user" ALTER COLUMN id SET DEFAULT nextval('user_id_seq'::regclass);
+
+
+--
+-- TOC entry 1965 (class 2604 OID 16670)
+-- Dependencies: 178 177 178
+-- Name: id; Type: DEFAULT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY vehiculos ALTER COLUMN id SET DEFAULT nextval('vehiculos_id_seq'::regclass);
+
+
+SET search_path = system, pg_catalog;
+
+--
+-- TOC entry 1971 (class 2604 OID 16697)
+-- Dependencies: 184 183 184
+-- Name: id; Type: DEFAULT; Schema: system; Owner: postgres
+--
+
+ALTER TABLE ONLY category ALTER COLUMN id SET DEFAULT nextval('category_id_seq'::regclass);
+
+
+--
+-- TOC entry 1952 (class 2604 OID 16609)
+-- Dependencies: 165 166 166
+-- Name: id; Type: DEFAULT; Schema: system; Owner: postgres
+--
+
+ALTER TABLE ONLY profile ALTER COLUMN id SET DEFAULT nextval('profile_id_seq'::regclass);
+
+
+--
+-- TOC entry 1950 (class 2604 OID 16595)
+-- Dependencies: 163 164 164
+-- Name: id; Type: DEFAULT; Schema: system; Owner: postgres
+--
+
+ALTER TABLE ONLY task ALTER COLUMN id SET DEFAULT nextval('task_id_seq'::regclass);
+
+
+--
+-- TOC entry 1956 (class 2604 OID 16632)
+-- Dependencies: 171 169 171
+-- Name: task_id; Type: DEFAULT; Schema: system; Owner: postgres
+--
+
+ALTER TABLE ONLY task_profile ALTER COLUMN task_id SET DEFAULT nextval('task_profile_task_id_seq'::regclass);
+
+
+--
+-- TOC entry 1957 (class 2604 OID 16633)
+-- Dependencies: 170 171 171
+-- Name: profile_id; Type: DEFAULT; Schema: system; Owner: postgres
+--
+
+ALTER TABLE ONLY task_profile ALTER COLUMN profile_id SET DEFAULT nextval('task_profile_profile_id_seq'::regclass);
+
+
+--
+-- TOC entry 1954 (class 2604 OID 16618)
+-- Dependencies: 168 167 168
+-- Name: id; Type: DEFAULT; Schema: system; Owner: postgres
+--
+
+ALTER TABLE ONLY "user" ALTER COLUMN id SET DEFAULT nextval('user_id_seq'::regclass);
+
+
+SET search_path = bussines, pg_catalog;
+
+--
+-- TOC entry 2002 (class 2606 OID 16682)
+-- Dependencies: 180 180 2032
+-- Name: articulos_pkey; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY articulos
+    ADD CONSTRAINT articulos_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2004 (class 2606 OID 16691)
+-- Dependencies: 182 182 2032
+-- Name: categorias_pkey; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY categorias
+    ADD CONSTRAINT categorias_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2012 (class 2606 OID 16727)
+-- Dependencies: 190 190 2032
+-- Name: citas_pkey; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY citas
+    ADD CONSTRAINT citas_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1998 (class 2606 OID 16664)
+-- Dependencies: 176 176 2032
+-- Name: clientes_pkey; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY clientes
+    ADD CONSTRAINT clientes_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2008 (class 2606 OID 16709)
+-- Dependencies: 186 186 2032
+-- Name: facturas_pkey; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY facturas
+    ADD CONSTRAINT facturas_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1996 (class 2606 OID 16652)
+-- Dependencies: 174 174 2032
+-- Name: inventarios_pkey; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY inventarios
+    ADD CONSTRAINT inventarios_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2010 (class 2606 OID 16718)
+-- Dependencies: 188 188 2032
+-- Name: servicios_pkey; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY servicios
+    ADD CONSTRAINT servicios_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2016 (class 2606 OID 16739)
+-- Dependencies: 192 192 192 2032
+-- Name: unique_articulos_servicios; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY articulos_servicios
+    ADD CONSTRAINT unique_articulos_servicios PRIMARY KEY (articulos_id, servicios_id);
+
+
+--
+-- TOC entry 2014 (class 2606 OID 16733)
+-- Dependencies: 191 191 191 2032
+-- Name: unique_citas_servicios; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY citas_servicios
+    ADD CONSTRAINT unique_citas_servicios PRIMARY KEY (citas_id, servicios_id);
+
+
+--
+-- TOC entry 2018 (class 2606 OID 16812)
+-- Dependencies: 194 194 2032
+-- Name: user_pkey; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT user_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2000 (class 2606 OID 16673)
+-- Dependencies: 178 178 2032
+-- Name: vehiculos_pkey; Type: CONSTRAINT; Schema: bussines; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY vehiculos
+    ADD CONSTRAINT vehiculos_pkey PRIMARY KEY (id);
+
+
+SET search_path = system, pg_catalog;
+
+--
+-- TOC entry 2006 (class 2606 OID 16700)
+-- Dependencies: 184 184 2032
+-- Name: category_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY category
+    ADD CONSTRAINT category_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1988 (class 2606 OID 16612)
+-- Dependencies: 166 166 2032
+-- Name: profile_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY profile
+    ADD CONSTRAINT profile_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1994 (class 2606 OID 16642)
+-- Dependencies: 172 172 172 2032
+-- Name: profile_user_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY profile_user
+    ADD CONSTRAINT profile_user_pkey PRIMARY KEY (user_id, profile_id);
+
+
+--
+-- TOC entry 1984 (class 2606 OID 16601)
+-- Dependencies: 164 164 2032
+-- Name: task_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY task
+    ADD CONSTRAINT task_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1992 (class 2606 OID 16636)
+-- Dependencies: 171 171 171 2032
+-- Name: task_profile_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY task_profile
+    ADD CONSTRAINT task_profile_pkey PRIMARY KEY (task_id, profile_id);
+
+
+--
+-- TOC entry 1986 (class 2606 OID 16603)
+-- Dependencies: 164 164 2032
+-- Name: unique_url; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY task
+    ADD CONSTRAINT unique_url UNIQUE (url);
+
+
+--
+-- TOC entry 1990 (class 2606 OID 16624)
+-- Dependencies: 168 168 2032
+-- Name: user_pkey; Type: CONSTRAINT; Schema: system; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT user_pkey PRIMARY KEY (id);
+
+
+SET search_path = bussines, pg_catalog;
+
+--
+-- TOC entry 2029 (class 2606 OID 16791)
+-- Dependencies: 192 2001 180 2032
+-- Name: fk_articulos_servicios_articulos_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY articulos_servicios
+    ADD CONSTRAINT fk_articulos_servicios_articulos_1 FOREIGN KEY (articulos_id) REFERENCES articulos(id);
+
+
+--
+-- TOC entry 2030 (class 2606 OID 16796)
+-- Dependencies: 192 2009 188 2032
+-- Name: fk_articulos_servicios_servicios_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY articulos_servicios
+    ADD CONSTRAINT fk_articulos_servicios_servicios_1 FOREIGN KEY (servicios_id) REFERENCES servicios(id);
+
+
+--
+-- TOC entry 2026 (class 2606 OID 16771)
+-- Dependencies: 190 182 2003 2032
+-- Name: fk_citas_categorias_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY citas
+    ADD CONSTRAINT fk_citas_categorias_1 FOREIGN KEY (cagoria_id_estado_citas) REFERENCES categorias(id);
+
+
+--
+-- TOC entry 2027 (class 2606 OID 16781)
+-- Dependencies: 191 190 2011 2032
+-- Name: fk_citas_servicios_citas_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY citas_servicios
+    ADD CONSTRAINT fk_citas_servicios_citas_1 FOREIGN KEY (citas_id) REFERENCES citas(id);
+
+
+--
+-- TOC entry 2028 (class 2606 OID 16786)
+-- Dependencies: 191 188 2009 2032
+-- Name: fk_citas_servicios_servicios_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY citas_servicios
+    ADD CONSTRAINT fk_citas_servicios_servicios_1 FOREIGN KEY (servicios_id) REFERENCES servicios(id);
+
+
+--
+-- TOC entry 2025 (class 2606 OID 16766)
+-- Dependencies: 190 178 1999 2032
+-- Name: fk_citas_vehiculos_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY citas
+    ADD CONSTRAINT fk_citas_vehiculos_1 FOREIGN KEY (vehiculos_id) REFERENCES vehiculos(id);
+
+
+--
+-- TOC entry 2023 (class 2606 OID 16761)
+-- Dependencies: 186 176 1997 2032
+-- Name: fk_facturas_clientes_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY facturas
+    ADD CONSTRAINT fk_facturas_clientes_1 FOREIGN KEY (clientes_id) REFERENCES clientes(id);
+
+
+--
+-- TOC entry 2020 (class 2606 OID 16746)
+-- Dependencies: 2001 180 174 2032
+-- Name: fk_inventarios_articulos_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY inventarios
+    ADD CONSTRAINT fk_inventarios_articulos_1 FOREIGN KEY (articulos_id) REFERENCES articulos(id);
+
+
+--
+-- TOC entry 2021 (class 2606 OID 16751)
+-- Dependencies: 174 2007 186 2032
+-- Name: fk_inventarios_facturas_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY inventarios
+    ADD CONSTRAINT fk_inventarios_facturas_1 FOREIGN KEY (facturas_id) REFERENCES facturas(id);
+
+
+--
+-- TOC entry 2022 (class 2606 OID 16756)
+-- Dependencies: 174 190 2011 2032
+-- Name: fk_inventarios_servicios_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY inventarios
+    ADD CONSTRAINT fk_inventarios_servicios_1 FOREIGN KEY (citas_id) REFERENCES citas(id);
+
+
+--
+-- TOC entry 2024 (class 2606 OID 16776)
+-- Dependencies: 188 182 2003 2032
+-- Name: fk_servicios_categorias_1; Type: FK CONSTRAINT; Schema: bussines; Owner: postgres
+--
+
+ALTER TABLE ONLY servicios
+    ADD CONSTRAINT fk_servicios_categorias_1 FOREIGN KEY (categorias_id_tipo_servicios) REFERENCES categorias(id);
+
+
+SET search_path = system, pg_catalog;
+
+--
+-- TOC entry 2019 (class 2606 OID 16741)
+-- Dependencies: 172 168 1989 2032
+-- Name: fk_profile_user_user_1; Type: FK CONSTRAINT; Schema: system; Owner: postgres
+--
+
+ALTER TABLE ONLY profile_user
+    ADD CONSTRAINT fk_profile_user_user_1 FOREIGN KEY (user_id) REFERENCES "user"(id);
+
+
+--
+-- TOC entry 2037 (class 0 OID 0)
+-- Dependencies: 5
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2013-11-22 00:47:36 VET
+
+--
+-- PostgreSQL database dump complete
+--
+

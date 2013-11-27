@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:include page="head.jsp" />
+<%session.invalidate();%>
 
                     <form id="login_form" action="login_validate.jsp" method="post">
                     <h1>Login</h1>

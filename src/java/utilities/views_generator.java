@@ -7,6 +7,7 @@
 package utilities;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.postgresql.util.PSQLException;
 
 /**
  *
@@ -49,7 +51,7 @@ public class views_generator {
         this.schema_name = schema_name;
     }
     
-        
+       
       public String getListAll() {
             try {
                 String sql=
@@ -171,7 +173,7 @@ public class views_generator {
                         + "<button type='submit'  class ='aceptar' id='aceptar' value='enviar'> aceptar </button></td>"
                         + "</tr>";
                 String form = "<div class='tabs_principal'>" 
-                        + "<ul><li><a href='#tabs-1'>Editar Registro de "+table_name+"</a></li></ul>"
+                        + "<ul><li><a href='#tabs-1'>Consultar Registro de "+table_name+"</a></li></ul>"
                         + "<div id='tabs-1'><form id='detail_form' class='form' method='POST' action='listAll.jsp'>"
                         + "<table class='form_table' align='center'>"+table_head+table_rows+"</table>"
                         + "</form></div>";
@@ -276,60 +278,182 @@ public class views_generator {
     
     
     public String getForm(List<LinkedHashMap<String,String>>  informationTable, LinkedHashMap<String,String> record, boolean isReadonly){
-        String readonly = "";
-        if (isReadonly){
-            readonly = "readonly='true'";
-        }
-        String form_rows = "";
-        for(HashMap<String,String> row: informationTable){
-            String column_name = (String) functions.isNullOrEmpty(row.get("column_name"), "") ;
-            
-            String is_nullable = (String) functions.isNullOrEmpty(row.get("is_nullable"), "") ;
-            String nullable = "";
-            String nullable2 = "";
-            
-            String maximum_length = (String) functions.isNullOrEmpty(row.get("character_maximum_length"), "") ;
-            String min_max_length = "";
-            
-            String column_value =  (String) functions.isNullOrEmpty(record.get(row.get("column_name")), "");
-            String value = "";
-            
-            if (!isSistemComumn(column_name)){
-                if(is_nullable.equalsIgnoreCase("NO")){
-                    nullable = "data-validation='required'";
-                    nullable2 = "*";
-                }
-                
-                if(!maximum_length.equalsIgnoreCase("")){
-                    min_max_length = "minlength='2' maxlength='"+maximum_length+"'";
-                }
-                
-                if(!column_value.equalsIgnoreCase("")){
-                    value = "value='"+column_value+"'";
-                }
-                    
-                if (column_name.equalsIgnoreCase("id")){
-                     form_rows+="<td><input type='hidden' id='"+column_name+"' value='"+column_value+"' name='"+column_name+"'></td>";
-                }else{
-                    form_rows+="<tr><td style='text-align: right; width: 50%'>"+nullable2+" "+column_name+" :</td>";// <td>*"+row.get("data_type")+"*</td>";
-                    String imputType = row.get("data_type");
-                    form_rows+="<td><input "+readonly+" "+nullable+" "+min_max_length;
-                    
-                    if (imputType.equalsIgnoreCase("character varying")){
-                        form_rows+=" type='text'";
-                    }else if (imputType.equalsIgnoreCase("integer") || imputType.equalsIgnoreCase("bigint")){
-                        form_rows+=" type='text' data-validation='number'";
-                    }else if (imputType.equalsIgnoreCase("bit")){
-                        form_rows+=" type='text'";
-                    }else if (imputType.equalsIgnoreCase("timestamp without time zone")){
-                        form_rows+=" type='text' class='date' data-validation='date'";
-                    }
-                    form_rows+="id='"+column_name+"' "+value+" name='"+column_name+"'></td>";
-                }
 
+        String form_rows = "";
+        for(HashMap<String,String> columnDescriptor: informationTable){
+
+            String column_name = (String) functions.isNullOrEmpty(columnDescriptor.get("column_name"), "") ;
+            String column_value =  (String) functions.isNullOrEmpty(record.get(columnDescriptor.get("column_name")), "");
+            //String value = "";     
+            if (!isSistemComumn(column_name)){
+                if (column_name.equalsIgnoreCase("id")){
+                    form_rows+= createInputRow("hidden", column_value, isReadonly, columnDescriptor);
+                }else{
+                    if (column_name.contains("_id")){
+
+                        form_rows+= createSingleSelectRow(column_value, isReadonly, columnDescriptor);
+                    }else{
+                        form_rows+= createInputRow("text", column_value, isReadonly, columnDescriptor);
+                    } 
+                }
             }
         }
         return form_rows;
+    }
+    
+    private String createSingleSelectRow(String value, boolean isReadonly, HashMap<String,String> columnDescriptor){
+        
+        String select = "";
+        
+        String column_name = (String) functions.isNullOrEmpty(columnDescriptor.get("column_name"), "") ;        
+
+        String validate = "";
+        if (isReadonly){
+            validate = "disabled='true'";
+        }else{
+            validate = createValidate(columnDescriptor);
+        }
+        ArrayList<String> values = new ArrayList<String>();
+        values.add(value);
+        String is_nullable = "";
+        if (functions.isNullOrEmpty(columnDescriptor.get("is_nullable"))){
+            is_nullable = "* ";
+        };
+        select+="<tr><td style='text-align: right; width: 50%'> "+is_nullable+column_name+" :</td>";// <td>*"+row.get("data_type")+"*</td>";
+        select+="<td><select class='select' "+validate+" id='"+column_name+"' name='"+column_name+"'>"
+                + createOptionsSelect(column_name, values)
+                + "</select></td>";
+        return select;
+    }
+    
+    private String createOptionsSelect(String column_name, ArrayList<String> values){
+            
+            String current_table_name = column_name.split("_id")[0];
+            String sql=
+                "select id, _name from "+schema_name+"."+current_table_name
+                + " where"
+                + " deleted = '0'";
+             String optionsList = "<option value ='' >Seleccione...</option>";
+            try {
+
+                Conexion con = new Conexion();
+                List<LinkedHashMap<String,String>> optionsData = con.select(sql);
+                for(HashMap<String,String> optionData: optionsData){
+                    String id = optionData.get("id");
+                    String name = optionData.get("_name");
+                    String selected = "";
+                    if (values.contains(id)){
+                        selected = "selected = 'selected' ";
+                    }
+                    optionsList += "<option value ='"+id+"' "+selected+">"+name+"</option>";
+                }
+                return optionsList;    
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return optionsList;
+            
+    }
+    
+    private String createInputRow(String type, String value, boolean isReadonly, HashMap<String,String> columnDescriptor){
+
+        String imput = "";
+        String column_name = (String) functions.isNullOrEmpty(columnDescriptor.get("column_name"), "") ;
+
+        if(!value.equalsIgnoreCase("")){
+            value = "value='"+value+"'";
+        }
+        if(type.equalsIgnoreCase("hidden")){
+            imput+="<td colspan='2' ><input type='"+type+"'";
+            imput+=" id='"+column_name+"' "+value+" name='"+column_name+"'></td>";
+        }else{
+            String validate = "";
+            if (isReadonly){
+                validate = "readonly='true'";
+            }else{
+                validate = createValidate(columnDescriptor);
+            }
+            String is_nullable = "";
+            if (functions.isNullOrEmpty(columnDescriptor.get("is_nullable"))){
+                is_nullable = "* ";
+            };
+            
+            imput+="<tr><td style='text-align: right; width: 50%'> "+is_nullable+column_name+" :</td>";// <td>*"+row.get("data_type")+"*</td>";
+            imput+="<td><input data-validation='required' class='input' type='"+type+"' "+validate;
+            imput+=" id='"+column_name+"' "+value+" name='"+column_name+"'></td>";
+        }
+        return imput;
+    }
+    
+    
+    
+    private String createValidate(HashMap<String,String> columnDescriptor){
+       
+        String dataValidation = "";
+        String dataValidationLength = "";
+        String dataValidationAllowing = "";
+        String dataValidationOptional = "";
+        String dataValidationFormat = "";
+        String dataValidationExtra = "";
+        
+        String is_nullable = (String) functions.isNullOrEmpty(columnDescriptor.get("is_nullable"), "") ;
+        if(is_nullable.equalsIgnoreCase("NO")){
+            dataValidation = functions.addWithComma(dataValidation, "required") ;
+        }else{
+            dataValidationOptional = "data-validation-optional='true' ";
+        }
+
+        String maximum_length = (String) functions.isNullOrEmpty(columnDescriptor.get("character_maximum_length"), "");
+        String minimum_length = (String) functions.isNullOrEmpty(columnDescriptor.get("character_minimum_length"), "");
+        
+        if (!maximum_length.equalsIgnoreCase("") && !maximum_length.equalsIgnoreCase("")){
+            dataValidation = functions.addWithComma(dataValidation, "length") ;
+            dataValidationLength = functions.addWithComma(dataValidationLength, minimum_length+"-"+maximum_length) ;
+        }else{
+            if(!maximum_length.equalsIgnoreCase("")){
+                dataValidation = functions.addWithComma(dataValidation, "length");
+                dataValidationLength = functions.addWithComma(dataValidationLength, "max"+maximum_length) ;
+            }
+            if(!maximum_length.equalsIgnoreCase("")){
+                dataValidation = functions.addWithComma(dataValidation, "length") ;
+                dataValidationLength = functions.addWithComma(dataValidationLength, "min"+minimum_length) ;
+            }
+        }
+        //System.out.println("columnDescriptor.get(\"numeric_precision\") = "+columnDescriptor.get("numeric_precision"));
+        String numeric_precision = (String) functions.isNullOrEmpty(columnDescriptor.get("numeric_precision"), "");
+         //System.out.println("numeric_precision = "+numeric_precision);
+        if (!numeric_precision.equalsIgnoreCase("")){
+             //System.out.println("number");
+             dataValidation =  "number";
+             //Math.pow(256,(Integer.valueOf(numeric_precision)/8));
+             //dataValidationLength = functions.addWithComma(dataValidationLength, "max"+numeric_precision);
+        }
+        
+        String datetime_precision = (String) functions.isNullOrEmpty(columnDescriptor.get("datetime_precision"), "");
+         //System.out.println("numeric_precision = "+numeric_precision);
+        if (!datetime_precision.equalsIgnoreCase("")){
+             //System.out.println("number");
+            
+            
+            dataValidation =  "date";
+            dataValidationFormat = "dd/mm/yyyy";
+            dataValidationExtra+= "class='date'";
+             //Math.pow(256,(Integer.valueOf(numeric_precision)/8));
+             //dataValidationLength = functions.addWithComma(dataValidationLength, "max"+numeric_precision);
+        }
+        
+        
+        dataValidation =  "data-validation='"+dataValidation+"' ";
+        dataValidationLength =  "data-validation-length='"+dataValidationLength+"' ";
+        dataValidationAllowing =  "data-validation-allowing='"+dataValidationAllowing+"' ";
+        dataValidationFormat = "data-validation-format='"+dataValidationFormat+"' ";
+
+        return dataValidation+
+                dataValidationLength+
+                dataValidationAllowing+
+                dataValidationOptional+
+                dataValidationFormat+
+                dataValidationExtra;
     }
     
     public Boolean isSistemComumn(String column_name){

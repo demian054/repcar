@@ -36,11 +36,12 @@
         User user = new User();
         
         user.setId(Integer.parseInt(row.get("id")));
+        user.setUser_name(row.get("user_name"));
         user.setName(row.get("_name"));
         user.setLast_name(row.get("last_name"));
         
         session.setAttribute("current_user", user);
-        response.sendRedirect("menu.jsp");
+        response.sendRedirect("blank.jsp");
     }
             
     

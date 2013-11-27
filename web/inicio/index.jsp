@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<% response.sendRedirect("listAll.jsp"); %>
+<% response.sendRedirect("menu.jsp"); %>
 <!DOCTYPE html>
 <html>
     <head>

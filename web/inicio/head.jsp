@@ -10,11 +10,15 @@
 <%
     User session_current_user = (User) session.getAttribute("current_user");
     User current_user = new User();
-    if (session_current_user==null){
+    
+    if (session_current_user!=null &&  session_current_user.getUser_name()!=""){
+         current_user = session_current_user;  
+    }else{
         session.setAttribute("msg_error", "La session ha expirado, por favor inicie de nuevo");
         response.sendRedirect("/rep-car3/inicio/login.jsp?msg_error=true");
-    }else{
-        current_user = session_current_user;  
+        //out.print("error de sesion");
+        //return;
+       
     }
 %>
 <!DOCTYPE html>
@@ -24,6 +28,8 @@
         <link rel="stylesheet" type="text/css" href="/rep-car3/assets/css/styles.css" media="screen" />
         <link rel="stylesheet" type="text/css" href="/rep-car3/assets/css/jquery.dataTables.css" media="screen" />
         <link rel="stylesheet" type="text/css" href="/rep-car3/assets/css/smoothness/jquery-ui-1.10.3.custom.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="/rep-car3/assets/css/jquery.multiselect.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="/rep-car3/assets/css/jquery.multiselect.filter.css" media="screen" />
         
          
         
@@ -31,6 +37,8 @@
         <script src="/rep-car3/assets/js/jquery.dataTables.js"></script>
         <script src="/rep-car3/assets/js/jquery-ui-1.10.3.custom.js"></script>
         <script src="/rep-car3/assets/js/form-validator/jquery.form-validator.js"></script>
+        <script src="/rep-car3/assets/js/jquery.multiselect.js"></script>
+        <script src="/rep-car3/assets/js/jquery.multiselect.filter.js"></script>
 	
         
         <title>Login</title>
@@ -97,8 +105,7 @@
 				primary: "ui-icon-plusthick"
 			}
 		});
-                
-                
+
                  $( ".back" ).button({
                         text: true,
 			icons: {
@@ -114,7 +121,22 @@
                 $(".menu" ).menu();
                 //$(".form").validate();
                 
-                $(".date").datepicker({dateFormat: 'dd/mm/yy'});
+                $(".date").datepicker({
+                    dateFormat: 'dd/mm/yy',
+                    onSelect: function(dateText, inst) {
+                        //lanzamos el onblur para que el validador ataje el evento y valide
+                        $(this).blur();
+                    }
+                });
+                
+                $(".select").multiselect({
+                    multiple: false,
+                    header: "Seleccione una Opción",
+                    noneSelectedText: "Seleccione una Opción",
+                    selectedList: 1
+                });
+                
+                $('.input').addClass("ui-corner-all");
                 
                 var myLanguage = {
                     errorTitle : 'Error de Validación en el Formulario !',
@@ -161,11 +183,19 @@
     <body>
         <table class="table_body">
             <tr id="cabecera" class="cabecera">
-                <td>
+                <td colspan="2">
                     <img src='/rep-car3/assets/images/banner2.jpg' > 
-
                 </td>
             </tr>
-            <tr><td><% out.println(current_user.getName()+" "+current_user.getLast_name());%></></tr>
-             <tr id="cuerpo">
-                 <td>
+           
+            <tr>
+                <td style="text-align: left; width: 20% ">
+                     <% if(current_user.getUser_name()!=""){ %>Usuario: <% out.println(current_user.getName()+" "+current_user.getLast_name());%>  <% } %></td>
+                <td style="text-align: right; width: 80%"><button type='button' class='back' onclick="window.location.href='/rep-car3/inicio/login.jsp'">Cerrar Sesión</button></td>
+            </tr>
+            
+            <tr style="vertical-align: top;">
+                <td id="menu" style="width: 20%">
+                    <jsp:include page="menu.jsp"/>
+                </td>
+                 <td id="cuerpo" style="width: 80%">

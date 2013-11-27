@@ -30,7 +30,7 @@
              };
         }
     }
-    views_generator vg = new views_generator(default_table);
+    views_generator vg = new views_generator(default_table, default_schema);
     out.println(vg.getFormCreate());
 %>
 
